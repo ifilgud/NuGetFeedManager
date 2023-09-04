@@ -5,6 +5,7 @@ using NuGet.Common;
 
 namespace NuGetFeedManager
 {
+    //
     public class Logger : ILogger
     {
         private readonly ObservableCollection<LogEntry> _logs;
