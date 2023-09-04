@@ -1,0 +1,221 @@
+﻿<Window x:Class="NuGetFeedManager.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:NuGetFeedManager"
+        mc:Ignorable="d"
+        Title="NuGet Feed Manager" Height="700" Width="1400">
+    <Window.DataContext>
+        <local:MainWindowViewModel/>
+    </Window.DataContext>
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Row="0" Orientation="Horizontal">
+                <Button 
+                        Content="Connect"
+                        Command="{Binding Path=ConnectToFeedCommand}"
+                        IsEnabled="{Binding Path=CanConnectToFeed}" Margin="3"/>
+                <TextBlock Text="Feed: "
+                           VerticalAlignment="Center"
+                           Margin="3"/>
+                <TextBox Text="{Binding Path=FeedUri, UpdateSourceTrigger=PropertyChanged}"
+                         VerticalAlignment="Center"
+                         Margin="3"/>
+            </StackPanel>
+            <StackPanel Grid.Row="1" Orientation="Horizontal">
+                <TextBlock Text="Username: "
+                           VerticalAlignment="Center"
+                           Margin="3"/>
+                <TextBox Text="{Binding Path=UserName, UpdateSourceTrigger=PropertyChanged}"
+                         VerticalAlignment="Center"
+                         MinWidth="60"
+                         Margin="3"/>
+                <TextBlock Text="Access Token: "
+                           VerticalAlignment="Center"
+                           Width="70"
+                           Margin="3"/>
+                <TextBox Text="{Binding Path=Token, UpdateSourceTrigger=PropertyChanged}"
+                         VerticalAlignment="Center"
+                         Margin="3"
+                         MinWidth="300"/>
+            </StackPanel>
+        </Grid>
+        <ListView Grid.Column="0"
+                  Grid.Row="1"
+                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                  ItemsSource="{Binding Path=FeedPackages}"
+                  Margin="3"
+                  SelectedItem="{Binding Path=SelectedPackage}"
+                  SelectionChanged="Feed_OnSelectionChanged">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock Text="{Binding Path=Id}"/>
+                        <TextBlock Text="{Binding Path=Version.Version}" Margin="5 0 0 0"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Style.Resources>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"
+                                         Color="DeepSkyBlue"/>
+                    </Style.Resources>
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+        <StackPanel Grid.Column="0"
+                    Grid.Row="2"
+                    Orientation="Horizontal">
+            <TextBlock Text="{Binding Path=FeedPackages.Count, Mode=OneWay}"
+                       Margin="3"
+                       VerticalAlignment="Center"/>
+            <CheckBox DockPanel.Dock="Bottom"
+                      Margin="3"
+                      VerticalAlignment="Center"
+                      Content="Include pre-release"
+                      IsChecked="{Binding Path=IncludePreReleaseFeed}"
+                      IsEnabled="{Binding Path=CanConnectToFeed}"/>
+            <TextBlock Text="Api Key:"
+                       VerticalAlignment="Center"
+                       Margin="3"/>
+            <TextBox Text="{Binding Path=FeedApiKey}"
+                     VerticalAlignment="Center"
+                     Margin="3"
+                     Width="50"/>
+            <Button Content="Push package"
+                    IsEnabled="{Binding Path=CanPushPackage}"
+                    Command="{Binding Path=PushPackageCommand}"
+                    Margin="3"/>
+            <Button Content="Check for update"
+                    IsEnabled="{Binding Path=CanCheckUpdatePackage}"
+                    Command="{Binding Path=CheckUpdatesPackageCommand}"
+                    Margin="3"/>
+            <Button Content="Update package to specific version"
+                    IsEnabled="{Binding Path=CanUpdatePackageToVersion}"
+                    Command="{Binding Path=UpdatePackageToVersionCommand}"
+                    Margin="3"/>
+        </StackPanel>
+        <Grid Grid.Column="1"
+              Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0"
+                    Grid.Row="0"
+                    VerticalAlignment="Top"
+                    Content="Check updates against"
+                    Command="{Binding Path=ConnectToUpdateFeedCommand}"
+                    IsEnabled="{Binding Path=CanConnectToUpdateFeed}"
+                    Margin="3"/>
+            <TextBox Grid.Column="1"
+                     Text="{Binding Path=FeedToCompareUri, UpdateSourceTrigger=PropertyChanged}"
+                     VerticalAlignment="Top"
+                     Margin="3"/>
+        </Grid>
+        <ListView Grid.Column="1"
+                  Grid.Row="1"
+                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                  ItemsSource="{Binding Path=PackagesToUpdate}"
+                  Margin="3"
+                  DockPanel.Dock="Top"
+                  SelectedItem="{Binding Path=SelectedPackageToUpdate}"
+                  SelectionChanged="FeedToCompare_OnSelectionChanged">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock Text="{Binding Path=Id}"/>
+                        <TextBlock Text="{Binding Path=Version.Version}" Margin="5 0 0 0"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Style.Resources>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"
+                                         Color="LightSkyBlue"/>
+                    </Style.Resources>
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+        <StackPanel Grid.Column="1"
+                    Grid.Row="2"
+                    Orientation="Horizontal">
+            <TextBlock Text="{Binding Path=PackagesToUpdate.Count, Mode=OneWay}"
+                       Margin="3"
+                       VerticalAlignment="Center"/>
+            <CheckBox DockPanel.Dock="Bottom"
+                      Margin="3"
+                      VerticalAlignment="Center"
+                      Content="Include pre-release"
+                      IsChecked="{Binding Path=IncludePreReleaseUpdateFeed}"
+                      IsEnabled="{Binding Path=CanConnectToUpdateFeed}"/>
+            <Button Content="Stop"
+                    IsEnabled="{Binding Path=CheckingUpdates}"
+                    Command="{Binding Path=CancelUpdateCheckCommand}"
+                    Margin="3"/>
+            <Button Content="Update package to latest"
+                    IsEnabled="{Binding Path=CanUpdatePackage}"
+                    Command="{Binding Path=UpdatePackageCommand}"
+                    Margin="3"/>
+            <Button Content="Update packages to latest"
+                    IsEnabled="{Binding Path=CanUpdatePackages}"
+                    Command="{Binding Path=UpdatePackagesCommand}"
+                    Margin="3"/>
+            <Button Content="Search and push:"
+                    IsEnabled="{Binding Path=CanPushPackage}"
+                    Command="{Binding Path=SearchAndPushCommand}"
+                    Margin="3"/>
+            <TextBox Text="{Binding Path=PackageToSearch}"
+                     VerticalAlignment="Center"
+                     MinWidth="100"
+                     Margin="3"/>
+        </StackPanel>
+        <Grid Grid.Column="0"
+              Grid.Row="3"
+              Grid.ColumnSpan="2"
+              Height="150"
+              VerticalAlignment="Bottom">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0"
+                       Text="Logs:"/>
+            <ListView Grid.Row="1"
+                      x:Name="LogsView"
+                      ItemsSource="{Binding Path=Logs}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding Path=Timestamp}"/>
+                            <TextBlock Text=": "/>
+                            <TextBlock Text="{Binding Path=Severity}"/>
+                            <TextBlock Text=": "/>
+                            <TextBlock Text="{Binding Path=Message}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+    </Grid>
+</Window>
