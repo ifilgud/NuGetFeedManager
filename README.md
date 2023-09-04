@@ -1,7 +1,7 @@
 # NuGetFeedManager
 Simple application to manager your private NuGet feed on TFS or Azure DevOps. It allows push packages and updating them without having to download manually packages.
 
-I created it because we have an on-premise TFS in the company with a private feed because it the build environment and deployment are in isolated networks without internet access.
+I created it because we have an on-premise TFS in the company with a private feed because and the build environment and deployment are in isolated network without internet access.
 
 For those cases, when you want to push packages to the feed or update them, you have to do everything using command line, so this application helps you keeping it updated.
 
