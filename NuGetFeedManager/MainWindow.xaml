@@ -38,7 +38,8 @@
                            Margin="3"/>
                 <TextBox Text="{Binding Path=FeedUri, UpdateSourceTrigger=PropertyChanged}"
                          VerticalAlignment="Center"
-                         Margin="3"/>
+                         Margin="3"
+                         MinWidth="580"/>
             </StackPanel>
             <StackPanel Grid.Row="1" Orientation="Horizontal">
                 <TextBlock Text="Username: "
@@ -55,7 +56,7 @@
                 <TextBox Text="{Binding Path=Token, UpdateSourceTrigger=PropertyChanged}"
                          VerticalAlignment="Center"
                          Margin="3"
-                         MinWidth="300"/>
+                         MinWidth="464"/>
             </StackPanel>
         </Grid>
         <ListView Grid.Column="0"
